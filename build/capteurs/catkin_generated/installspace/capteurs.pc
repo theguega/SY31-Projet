@@ -1,0 +1,8 @@
+prefix=/home/ubuntu/Documents/SY31/TPs/sy31_project/install
+
+Name: capteurs
+Description: Description of capteurs
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
