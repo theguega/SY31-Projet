@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ubuntu/Documents/SY31/TPs/sy31_project/src
+CMAKE_SOURCE_DIR = /home/ubuntu/Documents/sy31_project/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ubuntu/Documents/SY31/TPs/sy31_project/build
+CMAKE_BINARY_DIR = /home/ubuntu/Documents/sy31_project/build
 
 # Utility rule file for download_extra_data.
 
@@ -67,6 +67,6 @@ CMakeFiles/download_extra_data.dir/clean:
 .PHONY : CMakeFiles/download_extra_data.dir/clean
 
 CMakeFiles/download_extra_data.dir/depend:
-	cd /home/ubuntu/Documents/SY31/TPs/sy31_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ubuntu/Documents/SY31/TPs/sy31_project/src /home/ubuntu/Documents/SY31/TPs/sy31_project/src /home/ubuntu/Documents/SY31/TPs/sy31_project/build /home/ubuntu/Documents/SY31/TPs/sy31_project/build /home/ubuntu/Documents/SY31/TPs/sy31_project/build/CMakeFiles/download_extra_data.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/ubuntu/Documents/sy31_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ubuntu/Documents/sy31_project/src /home/ubuntu/Documents/sy31_project/src /home/ubuntu/Documents/sy31_project/build /home/ubuntu/Documents/sy31_project/build /home/ubuntu/Documents/sy31_project/build/CMakeFiles/download_extra_data.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/download_extra_data.dir/depend
 

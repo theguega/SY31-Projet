@@ -1,0 +1,8 @@
+prefix=/home/ubuntu/Documents/sy31_project/install
+
+Name: camera
+Description: Description of camera
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
