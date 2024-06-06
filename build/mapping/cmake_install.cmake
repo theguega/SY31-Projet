@@ -1,8 +1,8 @@
-# Install script for directory: /home/ubuntu/Documents/sy31_project/src/mapping
+# Install script for directory: /home/aubinvert/Desktop/sy31_project/src/mapping
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/ubuntu/Documents/sy31_project/install")
+  set(CMAKE_INSTALL_PREFIX "/home/aubinvert/Desktop/sy31_project/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -38,17 +38,17 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/ubuntu/Documents/sy31_project/build/mapping/catkin_generated/installspace/mapping.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/aubinvert/Desktop/sy31_project/build/mapping/catkin_generated/installspace/mapping.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mapping/cmake" TYPE FILE FILES
-    "/home/ubuntu/Documents/sy31_project/build/mapping/catkin_generated/installspace/mappingConfig.cmake"
-    "/home/ubuntu/Documents/sy31_project/build/mapping/catkin_generated/installspace/mappingConfig-version.cmake"
+    "/home/aubinvert/Desktop/sy31_project/build/mapping/catkin_generated/installspace/mappingConfig.cmake"
+    "/home/aubinvert/Desktop/sy31_project/build/mapping/catkin_generated/installspace/mappingConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mapping" TYPE FILE FILES "/home/ubuntu/Documents/sy31_project/src/mapping/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/mapping" TYPE FILE FILES "/home/aubinvert/Desktop/sy31_project/src/mapping/package.xml")
 endif()
 

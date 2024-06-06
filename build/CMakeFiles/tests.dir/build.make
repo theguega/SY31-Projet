@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ubuntu/Documents/sy31_project/src
+CMAKE_SOURCE_DIR = /home/aubinvert/Desktop/sy31_project/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ubuntu/Documents/sy31_project/build
+CMAKE_BINARY_DIR = /home/aubinvert/Desktop/sy31_project/build
 
 # Utility rule file for tests.
 
@@ -67,6 +67,6 @@ CMakeFiles/tests.dir/clean:
 .PHONY : CMakeFiles/tests.dir/clean
 
 CMakeFiles/tests.dir/depend:
-	cd /home/ubuntu/Documents/sy31_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ubuntu/Documents/sy31_project/src /home/ubuntu/Documents/sy31_project/src /home/ubuntu/Documents/sy31_project/build /home/ubuntu/Documents/sy31_project/build /home/ubuntu/Documents/sy31_project/build/CMakeFiles/tests.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/aubinvert/Desktop/sy31_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/aubinvert/Desktop/sy31_project/src /home/aubinvert/Desktop/sy31_project/src /home/aubinvert/Desktop/sy31_project/build /home/aubinvert/Desktop/sy31_project/build /home/aubinvert/Desktop/sy31_project/build/CMakeFiles/tests.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/tests.dir/depend
 

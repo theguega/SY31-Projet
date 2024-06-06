@@ -15,18 +15,16 @@ class MappingNode:
         
         # Subscribers
         self.odom = rospy.Subscriber('/pose_enco', PoseStamped, self.callback_odom)
-        self.lidar = rospy.Subscriber('/lidar/clusters', PointCloud2, self.callback_lidar)
-
-    def callback_lidar(self, lidar):
-        self.lidar = lidar
-        return
+        self.lidar = rospy.Subscriber('/lidar/clusters', PointCloud2, self.callback_final)
     
     def callback_odom(self, odom):
         self.odom = odom
         return
     
-    def callback_final(self):
-        
+    def callback_final(self, lidar):
+        # Compute the transformation matrix to map the maze to PointCloud2
+        theta_robot = self.odom.pose.orientation.w
+
         return
         
 if __name__ == '__main__':

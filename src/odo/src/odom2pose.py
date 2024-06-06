@@ -48,9 +48,9 @@ class Odom2PoseNode:
         self.pub_final = rospy.Publisher('/pose_final', PoseStamped, queue_size=10)
 
         # Subscribers
-        self.sub_gyro = rospy.Subscriber('/imu', Imu, self.callback_gyro)
         self.sub_enco = rospy.Subscriber('/sensor_state', SensorState, self.callback_enco)
         self.sub_magn = rospy.Subscriber('/magnetic_field', MagneticField, self.callback_magn)
+        self.sub_final = rospy.Subscriber('/imu', Imu, self.callback_final)
 
     def callback_enco(self, sensor_state):
         # Compute the differential in encoder count
@@ -74,28 +74,8 @@ class Odom2PoseNode:
         self.y_odom=self.y_odom+self.v*np.sin(self.O_odom)
 
         msg = coordinates_to_message(self.x_odom, self.y_odom, self.O_odom, sensor_state.header.stamp)
+        self.output_enco = msg
         self.pub_enco.publish(msg)
-
-    def callback_gyro(self, gyro):
-        if self.v == 0:
-            return
-
-        # Compute the elapsed time
-        t = gyro.header.stamp.to_sec()
-        dt = t - self.prev_gyro_t
-        if self.prev_gyro_t == 0:
-            self.prev_gyro_t = t
-            return
-        self.prev_gyro_t = t
-        
-        w=gyro.angular_velocity.z*dt
-
-        self.O_gyro=self.O_gyro+w
-        self.x_gyro=self.x_gyro+self.v*np.cos(self.O_gyro)
-        self.y_gyro=self.y_gyro+self.v*np.sin(self.O_gyro)
-
-        msg = coordinates_to_message(self.x_gyro, self.y_gyro, self.O_gyro, gyro.header.stamp)
-        self.pub_gyro.publish(msg)
 
     def callback_magn(self, magnetic_field):
         if self.v == 0:
@@ -113,23 +93,31 @@ class Odom2PoseNode:
         msg = coordinates_to_message(self.x_magn, self.y_magn, self.O_magn, magnetic_field.header.stamp)
         self.pub_magn.publish(msg)
         
-    def callback_final(self, magnetic_field, gyro, sensor_state):
-        if self.O==None:
-            return
+    def callback_final(self, gyro):
         if self.v==0:
             return
+
+        
+        # Compute the elapsed time
+        t = gyro.header.stamp.to_sec()
+        dt = t - self.prev_gyro_t
+        if self.prev_gyro_t == 0:
+            self.prev_gyro_t = t
+            return
+        self.prev_gyro_t = t
+        
+        w=gyro.angular_velocity.z*dt
+
+        self.O_gyro=self.O_gyro+w
+        self.x_gyro=self.x_gyro+self.v*np.cos(self.O_gyro)
+        self.y_gyro=self.y_gyro+self.v*np.sin(self.O_gyro)
+
+        msg = coordinates_to_message(self.x_gyro, self.y_gyro, self.O_gyro, gyro.header.stamp)
+        self.pub_gyro.publish(msg)
         
         if self.v<0.5:
-            self.x=self.x_gyro
-            self.y=self.y_gyro
-            self.O=self.O_gyro
-            msg = coordinates_to_message(self.x, self.y, self.O, gyro.header.stamp)
-        else:
-            self.x=self.x_odom
-            self.y=self.y_odom
-            self.O=self.O_odom
-            msg = coordinates_to_message(self.x, self.y, self.O, sensor_state.header.stamp)
-              
+            msg = self.output_enco
+        
         self.pub_final.publish(msg)
         
 if __name__ == '__main__':

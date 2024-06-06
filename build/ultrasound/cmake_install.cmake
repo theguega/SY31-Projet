@@ -1,8 +1,8 @@
-# Install script for directory: /home/ubuntu/Documents/sy31_project/src/ultrasound
+# Install script for directory: /home/aubinvert/Desktop/sy31_project/src/ultrasound
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/ubuntu/Documents/sy31_project/install")
+  set(CMAKE_INSTALL_PREFIX "/home/aubinvert/Desktop/sy31_project/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -38,17 +38,17 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/ubuntu/Documents/sy31_project/build/ultrasound/catkin_generated/installspace/ultrasound.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/aubinvert/Desktop/sy31_project/build/ultrasound/catkin_generated/installspace/ultrasound.pc")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ultrasound/cmake" TYPE FILE FILES
-    "/home/ubuntu/Documents/sy31_project/build/ultrasound/catkin_generated/installspace/ultrasoundConfig.cmake"
-    "/home/ubuntu/Documents/sy31_project/build/ultrasound/catkin_generated/installspace/ultrasoundConfig-version.cmake"
+    "/home/aubinvert/Desktop/sy31_project/build/ultrasound/catkin_generated/installspace/ultrasoundConfig.cmake"
+    "/home/aubinvert/Desktop/sy31_project/build/ultrasound/catkin_generated/installspace/ultrasoundConfig-version.cmake"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ultrasound" TYPE FILE FILES "/home/ubuntu/Documents/sy31_project/src/ultrasound/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ultrasound" TYPE FILE FILES "/home/aubinvert/Desktop/sy31_project/src/ultrasound/package.xml")
 endif()
 

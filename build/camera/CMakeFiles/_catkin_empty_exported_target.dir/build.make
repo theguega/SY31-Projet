@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ubuntu/Documents/sy31_project/src
+CMAKE_SOURCE_DIR = /home/aubinvert/Desktop/sy31_project/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ubuntu/Documents/sy31_project/build
+CMAKE_BINARY_DIR = /home/aubinvert/Desktop/sy31_project/build
 
 # Utility rule file for _catkin_empty_exported_target.
 
@@ -63,10 +63,10 @@ camera/CMakeFiles/_catkin_empty_exported_target.dir/build: _catkin_empty_exporte
 .PHONY : camera/CMakeFiles/_catkin_empty_exported_target.dir/build
 
 camera/CMakeFiles/_catkin_empty_exported_target.dir/clean:
-	cd /home/ubuntu/Documents/sy31_project/build/camera && $(CMAKE_COMMAND) -P CMakeFiles/_catkin_empty_exported_target.dir/cmake_clean.cmake
+	cd /home/aubinvert/Desktop/sy31_project/build/camera && $(CMAKE_COMMAND) -P CMakeFiles/_catkin_empty_exported_target.dir/cmake_clean.cmake
 .PHONY : camera/CMakeFiles/_catkin_empty_exported_target.dir/clean
 
 camera/CMakeFiles/_catkin_empty_exported_target.dir/depend:
-	cd /home/ubuntu/Documents/sy31_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ubuntu/Documents/sy31_project/src /home/ubuntu/Documents/sy31_project/src/camera /home/ubuntu/Documents/sy31_project/build /home/ubuntu/Documents/sy31_project/build/camera /home/ubuntu/Documents/sy31_project/build/camera/CMakeFiles/_catkin_empty_exported_target.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/aubinvert/Desktop/sy31_project/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/aubinvert/Desktop/sy31_project/src /home/aubinvert/Desktop/sy31_project/src/camera /home/aubinvert/Desktop/sy31_project/build /home/aubinvert/Desktop/sy31_project/build/camera /home/aubinvert/Desktop/sy31_project/build/camera/CMakeFiles/_catkin_empty_exported_target.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : camera/CMakeFiles/_catkin_empty_exported_target.dir/depend
 
