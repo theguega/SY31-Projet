@@ -113,6 +113,8 @@ class Odom2PoseNode:
 
         msg = coordinates_to_message(self.x_gyro, self.y_gyro, self.O_gyro, gyro.header.stamp)
         self.pub_gyro.publish(msg)
+        if self.v < 0.5:
+            msg = self.output_enco
         self.pub_final.publish(msg)
         
 if __name__ == '__main__':

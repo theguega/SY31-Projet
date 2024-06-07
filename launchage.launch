@@ -1,0 +1,17 @@
+<launch>
+    <node name="odometrie" pkg="odo" type="odom2pose.py" output="screen">
+        <param name="odo" value="base_link" />
+    </node>
+
+    <node name="clusterer" pkg="lidar" type="clusterer.py" output="screen">
+        <param name="base_scan" value="base_link" />
+    </node>
+
+    <node name="transformer" pkg="lidar" type="transformer.py" output="screen">
+        <param name="base_scan" value="base_link" />
+    </node>
+
+    <node name="mapper" pkg="mapping" type="mapping.py" output="screen">
+        <param name="base_scan" value="base_link" />
+    </node>
+</launch>
