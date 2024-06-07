@@ -1,0 +1,16 @@
+<launch>
+    <!-- Launch transformer node from lidar package -->
+    <node pkg="lidar" type="transformer.py" name="transformer" output="screen">
+        <param name="use_sim_time" value="false"/>
+    </node>
+    
+    <!-- Launch clusterer node from lidar package -->
+    <node pkg="lidar" type="clusterer.py" name="clusterer" output="screen">
+        <param name="use_sim_time" value="false"/>
+    </node>
+    
+    <!-- Launch odom2 node from odo package -->
+    <node pkg="odo" type="odom2.py" name="odom2" output="screen">
+        <param name="use_sim_time" value="false"/>
+    </node>
+</launch>
