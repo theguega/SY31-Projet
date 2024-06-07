@@ -97,7 +97,6 @@ class Odom2PoseNode:
         if self.v==0:
             return
 
-        
         # Compute the elapsed time
         t = gyro.header.stamp.to_sec()
         dt = t - self.prev_gyro_t
@@ -114,10 +113,6 @@ class Odom2PoseNode:
 
         msg = coordinates_to_message(self.x_gyro, self.y_gyro, self.O_gyro, gyro.header.stamp)
         self.pub_gyro.publish(msg)
-        
-        if self.v<0.5:
-            msg = self.output_enco
-        
         self.pub_final.publish(msg)
         
 if __name__ == '__main__':
