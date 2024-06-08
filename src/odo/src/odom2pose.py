@@ -111,13 +111,15 @@ class Odom2PoseNode:
         w=gyro.angular_velocity.z*dt
 
         self.O_gyro += w
-        self.x_gyro += self.v*np.cos(self.O_gyro)/5
-        self.y_gyro += self.v*np.sin(self.O_gyro)/5
+        self.v_gyro = self.v
+        self.x_gyro += self.v_gyro*np.cos(self.O_gyro)/4.95
+        self.y_gyro += self.v_gyro*np.sin(self.O_gyro)/4.95
 
         msg = coordinates_to_message(self.x_gyro, self.y_gyro, self.O_gyro, gyro.header.stamp)
         self.pub_gyro.publish(msg)
         
         self.O_mixed = self.O_gyro
+        
         self.x_mixed = self.x_gyro
         self.y_mixed = self.y_gyro
 
