@@ -77,9 +77,7 @@ class Odom2PoseNode:
         self.output_enco = msg
         self.pub_enco.publish(msg)
 
-    def callback_magn(self, magnetic_field):
-        if self.v == 0:
-            return          
+    def callback_magn(self, magnetic_field):         
         
         w=np.arctan2(magnetic_field.magnetic_field.y,magnetic_field.magnetic_field.x)+self.MAG_OFFSET
         
@@ -91,6 +89,7 @@ class Odom2PoseNode:
         self.y_magn=self.y_magn+self.v*np.sin(self.O_magn)
 
         msg = coordinates_to_message(self.x_magn, self.y_magn, self.O_magn, magnetic_field.header.stamp)
+        self.output_magn = msg
         self.pub_magn.publish(msg)
         
     def callback_final(self, gyro):
@@ -113,8 +112,8 @@ class Odom2PoseNode:
 
         msg = coordinates_to_message(self.x_gyro, self.y_gyro, self.O_gyro, gyro.header.stamp)
         self.pub_gyro.publish(msg)
-        if self.v < 0.5:
-            msg = self.output_enco
+        #if self.v < 0.5:
+        msg = self.output_magn
         self.pub_final.publish(msg)
         
 if __name__ == '__main__':

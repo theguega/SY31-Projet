@@ -21,34 +21,34 @@ class MappingNode:
         rospy.init_node('mapping')
         # Map
         self.map = np.array([])
+        
 
         # Publishers
         self.mapper = rospy.Publisher('/map', PointCloud2, queue_size=10)
         
         # Subscribers
-        self.odom = rospy.Subscriber('/pose_enco', PoseStamped, self.callback_odom)
+        self.odom = rospy.Subscriber('/pose_final', PoseStamped, self.callback_odom)
         self.lidar = rospy.Subscriber('/lidar/clusters', PointCloud2, self.callback_final)
     
     def callback_odom(self, odom):
-        self.coords_robot = odom
+        self.x_robot = odom.pose.position.x
+        self.y_robot = odom.pose.position.y
+        self.theta_robot = euler_from_quaternion([odom.pose.orientation.x, odom.pose.orientation.y, odom.pose.orientation.z, odom.pose.orientation.w])[2]
         return
     
-    def callback_final(self, msg):
-        #robots position [x, y, theta]
-        x_robot = self.coords_robot.pose.position.x
-        y_robot = self.coords_robot.pose.position.y
-        theta_robot = euler_from_quaternion([self.coords_robot.pose.orientation.x, self.coords_robot.pose.orientation.y, self.coords_robot.pose.orientation.z, self.coords_robot.pose.orientation.w])[2]
-
+    def callback_final(self, msg):        
         # Transformation matrix
-        T = np.array([[np.cos(theta_robot), -np.sin(theta_robot), x_robot],
-                      [np.sin(theta_robot), np.cos(theta_robot), y_robot],
+        T = np.array([[np.cos(self.theta_robot), -np.sin(self.theta_robot), self.x_robot],
+                      [np.sin(self.theta_robot), np.cos(self.theta_robot), self.y_robot],
                       [0, 0, 1]])
         
         # Transform the points from the clusters
         points = np.array(list(read_points(msg)))[:,:2]
         points = np.hstack((points, np.ones((points.shape[0],1)))).transpose()
         points = np.dot(T, points)[:2].transpose()
-        map_msg = create_cloud(msg.header, PC2FIELDS, [[points[i,0],points[i,1],0,0] for i in range(points.shape[0])])
+
+        self.map = np.vstack((self.map, points)) if self.map.size else points
+        map_msg = create_cloud(msg.header, PC2FIELDS, [[self.map[i,0],self.map[i,1],0,0] for i in range(self.map.shape[0])])
         map_msg.header.frame_id = "base_scan"
 
         self.mapper.publish(map_msg)
