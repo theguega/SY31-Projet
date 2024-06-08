@@ -51,6 +51,8 @@ class Odom2PoseNode:
         self.sub_enco = rospy.Subscriber('/sensor_state', SensorState, self.callback_enco)
         self.sub_magn = rospy.Subscriber('/magnetic_field', MagneticField, self.callback_magn)
         self.sub_final = rospy.Subscriber('/imu', Imu, self.callback_final)
+        self.output_enco = None
+        self.output_magn = None
 
     def callback_enco(self, sensor_state):
         # Compute the differential in encoder count
@@ -78,6 +80,8 @@ class Odom2PoseNode:
         self.pub_enco.publish(msg)
 
     def callback_magn(self, magnetic_field):         
+        if self.v==0:
+            return
         
         w=np.arctan2(magnetic_field.magnetic_field.y,magnetic_field.magnetic_field.x)+self.MAG_OFFSET
         
@@ -106,15 +110,19 @@ class Odom2PoseNode:
         
         w=gyro.angular_velocity.z*dt
 
-        self.O_gyro=self.O_gyro+w
-        self.x_gyro=self.x_gyro+self.v*np.cos(self.O_gyro)
-        self.y_gyro=self.y_gyro+self.v*np.sin(self.O_gyro)
+        self.O_gyro += w
+        self.x_gyro += self.v*np.cos(self.O_gyro)/5
+        self.y_gyro += self.v*np.sin(self.O_gyro)/5
 
         msg = coordinates_to_message(self.x_gyro, self.y_gyro, self.O_gyro, gyro.header.stamp)
         self.pub_gyro.publish(msg)
-        #if self.v < 0.5:
-        msg = self.output_magn
-        self.pub_final.publish(msg)
+        
+        self.O_mixed = self.O_gyro
+        self.x_mixed = self.x_gyro
+        self.y_mixed = self.y_gyro
+
+        mixed_msg = coordinates_to_message(self.x_mixed, self.y_mixed, self.O_mixed, gyro.header.stamp)
+        self.pub_final.publish(mixed_msg)
         
 if __name__ == '__main__':
     node = Odom2PoseNode()

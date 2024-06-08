@@ -47,6 +47,10 @@ class MappingNode:
         points = np.hstack((points, np.ones((points.shape[0],1)))).transpose()
         points = np.dot(T, points)[:2].transpose()
 
+        # For debugging purposes
+        points_msg = create_cloud(msg.header, PC2FIELDS, [[points[i,0],points[i,1],0,0] for i in range(points.shape[0])])
+
+        # Add points to the map
         self.map = np.vstack((self.map, points)) if self.map.size else points
         map_msg = create_cloud(msg.header, PC2FIELDS, [[self.map[i,0],self.map[i,1],0,0] for i in range(self.map.shape[0])])
         map_msg.header.frame_id = "base_scan"
