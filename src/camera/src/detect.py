@@ -4,7 +4,8 @@ import rospy
 import numpy as np
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, CompressedImage
+from std_msgs.msg import String
 
 class CameraNode:
     def __init__(self):
@@ -15,16 +16,60 @@ class CameraNode:
         self.bridge = CvBridge()
 
         # Initialize the node parameters
-        self.Cmin = np.array([190,140,0])
-        self.Cmax= np.array([250,170,5])
+        self.Blue = np.array([166,114,3])
+        self.Bmin = self.Blue*0.8
+        self.Bmax = self.Blue*1.2
+
+        self.Red = np.array([123,102,187])
+        self.Rmin = self.Red*0.8
+        self.Rmax = self.Red*1.2
 
         # Publisher to the output topics.
-        self.pub_img = rospy.Publisher('~output', Image, queue_size=10)
+        self.pub_img_blue = rospy.Publisher('~output/blue', Image, queue_size=10)
+        self.pub_img_red = rospy.Publisher('~output/red', Image, queue_size=10)
+
+        self.pub_color = rospy.Publisher('~output/color', String, queue_size=10)
 
         # Subscriber to the input topic. self.callback is called when a message is received
-        self.subscriber = rospy.Subscriber('/camera/image_rect_color', Image, self.callback)
+        self.sub_bleu = rospy.Subscriber('/camera/image_rect_color/compressed', CompressedImage, self.callback_blue)
+        self.sub_red = rospy.Subscriber('/camera/image_rect_color/compressed', CompressedImage, self.callback_red)
 
-    def callback(self, msg):
+
+    def callback_blue(self, msg):
+        '''
+        Function called when an image is received.
+        msg: Image message received
+        img_bgr: Width*Height*3 Numpy matrix storing the image
+        '''
+        # Convert ROS CompressedImage -> OpenCV
+        try:
+            np_arr = np.frombuffer(msg.data, np.uint8)
+            img_bgr = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+        except CvBridgeError as e:
+            rospy.logwarn(e)
+            return
+        
+        cv2.cvtColor(img_bgr, cv2.COLOR_BGR2Luv)
+        mask = cv2.inRange(img_bgr, self.Bmin, self.Bmax)
+        
+        contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        
+        for c in contours:
+            x,y,w,h=cv2.boundingRect(c)
+            cv2.drawContours(img_bgr,c,-1,(0,255,0),2)
+            cv2.rectangle(img_bgr, (x,y), (x+w, y+h), (0,255,0), 2)
+            cv2.circle(img_bgr, (int(x+w/2),int(y+h/2)), 5, (0,0,255), -1)
+
+        # Convert OpenCV -> ROS Image and publish
+        try:
+            self.pub_img_blue.publish(self.bridge.cv2_to_imgmsg(img_bgr, "bgr8")) # /!\ 'mono8' for grayscale images, 'bgr8' for color images
+        except CvBridgeError as e:
+            rospy.logwarn(e)
+
+        if len(contours)>20:
+            self.pub_color.publish("Bleu")
+
+    def callback_red(self, msg):
         '''
         Function called when an image is received.
         msg: Image message received
@@ -32,28 +77,31 @@ class CameraNode:
         '''
         # Convert ROS Image -> OpenCV
         try:
-            img_bgr = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+            np_arr = np.frombuffer(msg.data, np.uint8)
+            img_bgr = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
         except CvBridgeError as e:
             rospy.logwarn(e)
             return
         
         cv2.cvtColor(img_bgr, cv2.COLOR_BGR2Luv)
-        mask = cv2.inRange(img_bgr, self.Cmin, self.Cmax)
+        mask = cv2.inRange(img_bgr, self.Rmin, self.Rmax)
         
         contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        if len(contours)!=0:
-            biggest_contour=max(contours, key=cv2.contourArea)
-            x,y,w,h=cv2.boundingRect(biggest_contour)
-            cv2.drawContours(img_bgr,biggest_contour,-1,(0,255,0),2)
+        for c in contours:
+            x,y,w,h=cv2.boundingRect(c)
+            cv2.drawContours(img_bgr,c,-1,(0,255,0),2)
             cv2.rectangle(img_bgr, (x,y), (x+w, y+h), (0,255,0), 2)
             cv2.circle(img_bgr, (int(x+w/2),int(y+h/2)), 5, (0,0,255), -1)
         
         
         # Convert OpenCV -> ROS Image and publish
         try:
-            self.pub_img.publish(self.bridge.cv2_to_imgmsg(img_bgr, "bgr8")) # /!\ 'mono8' for grayscale images, 'bgr8' for color images
+            self.pub_img_red.publish(self.bridge.cv2_to_imgmsg(img_bgr, "bgr8")) # /!\ 'mono8' for grayscale images, 'bgr8' for color images
         except CvBridgeError as e:
             rospy.logwarn(e)
+        
+        if len(contours)>20:
+            self.pub_color.publish("Rouge")
 
 if __name__ == '__main__':
     # Start the node and wait until it receives a message or stopped by Ctrl+C
