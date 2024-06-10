@@ -17,6 +17,9 @@
     <node name="cam" pkg="camera" type="detect.py" output="screen">
         <param name="cam" value="base_link" />
     </node>
+    <node name="ultrasound" pkg="ultrasound" type="us_driver.py" output="screen">
+        <param name="dist" value="base_link" />
+    </node>
     <arg name="transport" default="compressed" />
 	<arg name="ns_base" default="turtlebotcam" />
 	<arg name="ns_repl" default="camera" />
