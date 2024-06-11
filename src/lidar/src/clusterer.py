@@ -21,11 +21,10 @@ def callback(msg):
     groups = np.zeros(points.shape[0], dtype=int)
 
     
-    k = 5
+    k = 2
     # Clustering algorithm considering k-nearest neighbors
     for i in range(k, points.shape[0]):
-        r = norm([0,0], points[i])
-        D =  (1/r) * 2
+        D =  0.01
          
         d = np.zeros(k-1)
         for j in range(1, k):
@@ -39,22 +38,17 @@ def callback(msg):
             groups[i]=groups[i-jmin]
             
     # remove points of cluster 0
-    for i in range(len(points)-1,-1,-1):
-        if groups[i]==0:
-            np.delete(points, i)
-            np.delete(groups, i)
+    non_zero_indices = np.where(groups != 0)[0]
+    points = points[non_zero_indices]
+    groups = groups[non_zero_indices]
         
     #remove cluster with small amout of points
-    non_valid_groups=[]
-    for c in range(1,max(groups)):
-        count = groups.tolist().count(c)
-        if count<5:
-            non_valid_groups.append(c)
-            
-    for i in range(len(points)-1,-1,-1):
-        if groups[i] in non_valid_groups:
-            np.delete(points, i)
-            np.delete(groups, i)
+    unique_groups, counts = np.unique(groups, return_counts=True)
+    non_valid_groups = unique_groups[counts < 5]
+
+    valid_mask = np.isin(groups, non_valid_groups, invert=True)
+    points = points[valid_mask]
+    groups = groups[valid_mask]
             
 
     clust_msg = create_cloud(msg.header, PC2FIELDS, [[points[i,0],points[i,1],0,c] for i,c in enumerate(groups)])
