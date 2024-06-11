@@ -20,13 +20,12 @@ def callback(msg):
     points = np.array(list(read_points(msg)))[:,:2]
     groups = np.zeros(points.shape[0], dtype=int)
 
-    # ToDo: Determine k and D values
-    k = 2
-
-    # ToDo: Clustering algorithm
+    
+    k = 5
+    # Clustering algorithm considering k-nearest neighbors
     for i in range(k, points.shape[0]):
         r = norm([0,0], points[i])
-        D = 0.1 * (1/r) * 2
+        D =  (1/r) * 2
          
         d = np.zeros(k-1)
         for j in range(1, k):
@@ -40,7 +39,7 @@ def callback(msg):
             groups[i]=groups[i-jmin]
             
     # remove points of cluster 0
-    for i in range(len(points)):
+    for i in range(len(points)-1,-1,-1):
         if groups[i]==0:
             np.delete(points, i)
             np.delete(groups, i)
@@ -49,10 +48,10 @@ def callback(msg):
     non_valid_groups=[]
     for c in range(1,max(groups)):
         count = groups.tolist().count(c)
-        if count<5 and count>1000:
+        if count<5:
             non_valid_groups.append(c)
             
-    for i in range(len(points)):
+    for i in range(len(points)-1,-1,-1):
         if groups[i] in non_valid_groups:
             np.delete(points, i)
             np.delete(groups, i)

@@ -55,41 +55,6 @@ class MappingNode:
         # Add points to the map
         self.map = np.vstack((self.map, points)) if self.map.size else points
         
-        # k = 2
-        # groups = np.zeros(self.map.shape[0], dtype=int)
-        # for i in range(k, self.map.shape[0]):
-        #     r = norm([0,0], self.map[i])
-        #     D = 0.1 * (1/r) * 2
-            
-        #     d = np.zeros(k-1)
-        #     for j in range(1, k):
-        #         d[j-1] = norm(self.map[i],self.map[i-j])
-        #     dmin = min(d)
-        #     jmin = np.argmin(d) + 1
-            
-        #     if dmin < D:
-        #         if groups[i-jmin] == 0:
-        #             groups[i-jmin]=max(groups)+1
-        #         groups[i]=groups[i-jmin]
-            
-        # # remove points of cluster 0
-        # for i in range(len(points)):
-        #     if groups[i]==0:
-        #         np.delete(self.map, i)
-        #         np.delete(groups, i)
-            
-        # #remove cluster with small amout of points
-        # non_valid_groups=[]
-        # for c in range(1,max(groups)):
-        #     count = groups.tolist().count(c)
-        #     if count<5 and count>1000:
-        #         non_valid_groups.append(c)
-                
-        # for i in range(len(self.map)):
-        #     if groups[i] in non_valid_groups:
-        #         np.delete(self.map, i)
-        #         np.delete(groups, i)
-        
         map_msg = create_cloud(msg.header, PC2FIELDS, [[self.map[i,0],self.map[i,1],0,0] for i in range(self.map.shape[0])])
         map_msg.header.frame_id = "base_scan"
 

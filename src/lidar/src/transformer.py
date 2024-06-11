@@ -17,7 +17,7 @@ def callback(msg):
     coords = []
 
     for i, theta in enumerate(np.arange(msg.angle_min, msg.angle_max, msg.angle_increment)):
-        # ToDo: Remove points too close
+        # Filter points
         r = msg.ranges[i]
         if r >= 0.1:       
             x=r*np.cos(theta)
