@@ -6,6 +6,7 @@ import rospy
 from geometry_msgs.msg import PoseStamped
 from turtlebot3_msgs.msg import SensorState
 from sensor_msgs.msg import Imu, MagneticField
+from std_msgs.msg import Float32
 
 from tf.transformations import quaternion_from_euler
 
@@ -47,7 +48,6 @@ class Odom2PoseNode:
         self.pub_gyro = rospy.Publisher('/pose_gyro', PoseStamped, queue_size=10)
         self.pub_magn = rospy.Publisher('/pose_magn', PoseStamped, queue_size=10)
         self.pub_final = rospy.Publisher('/pose_final', PoseStamped, queue_size=10)
-
         # Subscribers
         self.sub_enco = rospy.Subscriber('/sensor_state', SensorState, self.callback_enco)
         self.sub_magn = rospy.Subscriber('/magnetic_field', MagneticField, self.callback_magn)

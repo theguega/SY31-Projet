@@ -24,7 +24,7 @@ def callback(msg):
     k = 2
     # Clustering algorithm considering k-nearest neighbors
     for i in range(k, points.shape[0]):
-        D =  0.01
+        D =  0.005
          
         d = np.zeros(k-1)
         for j in range(1, k):

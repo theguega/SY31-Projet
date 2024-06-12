@@ -5,6 +5,7 @@ import numpy as np
 import rospy
 from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import PointCloud2, PointField
+from std_msgs.msg import Float32
 from sensor_msgs.point_cloud2 import create_cloud, read_points
 from tf.transformations import euler_from_quaternion
 
@@ -24,6 +25,7 @@ class MappingNode:
         # Map
         self.map = np.array([])
         
+        
 
         # Publishers
         self.mapper = rospy.Publisher('/map', PointCloud2, queue_size=10)
@@ -31,14 +33,18 @@ class MappingNode:
         # Subscribers
         self.odom = rospy.Subscriber('/pose_final', PoseStamped, self.callback_odom)
         self.lidar = rospy.Subscriber('/lidar/clusters', PointCloud2, self.callback_final)
-    
+
     def callback_odom(self, odom):
         self.x_robot = odom.pose.position.x
         self.y_robot = odom.pose.position.y
         self.theta_robot = euler_from_quaternion([odom.pose.orientation.x, odom.pose.orientation.y, odom.pose.orientation.z, odom.pose.orientation.w])[2]
         return
     
-    def callback_final(self, msg):        
+    def callback_vitesse(self, msg):
+        self.angle = msg.data
+        return
+    
+    def callback_final(self, msg):    
         # Transformation matrix
         T = np.array([[np.cos(self.theta_robot), -np.sin(self.theta_robot), self.x_robot],
                       [np.sin(self.theta_robot), np.cos(self.theta_robot), self.y_robot],
