@@ -72,9 +72,9 @@ class Odom2PoseNode:
         self.v = (v_left+v_right)/2
         self.w = (v_right-v_left)/(2*self.WHEEL_SEPARATION)
 
-        self.O_odom=self.O_odom+self.w
-        self.x_odom=self.x_odom+self.v*np.cos(self.O_odom)
-        self.y_odom=self.y_odom+self.v*np.sin(self.O_odom)
+        self.O_odom=self.O_odom+self.w/20
+        self.x_odom=self.x_odom+self.v*np.cos(self.O_odom)/20
+        self.y_odom=self.y_odom+self.v*np.sin(self.O_odom)/20
 
         msg = coordinates_to_message(self.x_odom, self.y_odom, self.O_odom, sensor_state.header.stamp)
         self.output_enco = msg
@@ -119,8 +119,8 @@ class Odom2PoseNode:
         self.pub_gyro.publish(msg)
         
         self.O_mixed = self.O_gyro
-        self.x_mixed += self.v*np.cos(self.O_mixed)/4.95
-        self.y_mixed += self.v*np.sin(self.O_mixed)/4.95
+        self.x_mixed += self.v*np.cos(self.O_gyro)/4.95
+        self.y_mixed += self.v*np.sin(self.O_gyro)/4.95
 
         mixed_msg = coordinates_to_message(self.x_mixed, self.y_mixed, self.O_mixed, gyro.header.stamp)
         self.pub_final.publish(mixed_msg)
