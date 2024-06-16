@@ -7,6 +7,7 @@ from geometry_msgs.msg import PoseStamped
 from turtlebot3_msgs.msg import SensorState
 from sensor_msgs.msg import Imu, MagneticField
 from std_msgs.msg import Float32
+from time import time as system_time
 
 from tf.transformations import quaternion_from_euler
 
@@ -55,7 +56,18 @@ class Odom2PoseNode:
         self.sub_final = rospy.Subscriber('/imu', Imu, self.callback_final)
         self.output_enco = None
         self.output_magn = None
+        self.prev_time_enco = None
+
     def callback_enco(self, sensor_state):
+        t = sensor_state.header.stamp.to_sec()
+        if not self.prev_time_enco:
+            self.prev_time_enco = t
+            return
+        dt = t - self.prev_time_enco
+        self.prev_time_enco = t  
+
+        print(dt)
+
         # Compute the differential in encoder count
         d_left_encoder = sensor_state.left_encoder-self.prev_left_encoder
         d_right_encoder = sensor_state.right_encoder-self.prev_right_encoder
@@ -65,16 +77,17 @@ class Odom2PoseNode:
             return
         self.prev_right_encoder = sensor_state.right_encoder
         self.prev_left_encoder = sensor_state.left_encoder
-        
-        v_right = (2*np.pi/self.ENCODER_RESOLUTION*d_right_encoder)/(1/28.7)*self.WHEEL_RADIUS
-        v_left = (2*np.pi/self.ENCODER_RESOLUTION*d_left_encoder)/(1/28.7)*self.WHEEL_RADIUS
+
+        # After investigation, the average frequency of the encoder is 28.7 Hz (our TP subject was tolding us 20 Hz, but it's not the case)
+        v_right = ((2*np.pi/self.ENCODER_RESOLUTION*d_right_encoder)/dt)*self.WHEEL_RADIUS
+        v_left = ((2*np.pi/self.ENCODER_RESOLUTION*d_left_encoder)/dt)*self.WHEEL_RADIUS
 
         self.v = (v_left+v_right)/2
         self.w = (v_right-v_left)/(self.WHEEL_SEPARATION)
 
-        self.x_odom=self.x_odom+self.v*np.cos(self.O_odom)/28.7
-        self.y_odom=self.y_odom+self.v*np.sin(self.O_odom)/28.7
-        self.O_odom=self.O_odom+self.w/28.7
+        self.x_odom=self.x_odom+self.v*np.cos(self.O_odom)*dt
+        self.y_odom=self.y_odom+self.v*np.sin(self.O_odom)*dt
+        self.O_odom=self.O_odom+self.w*dt
 
         msg = coordinates_to_message(self.x_odom, self.y_odom, self.O_odom, sensor_state.header.stamp)
         self.output_enco = msg
@@ -109,8 +122,6 @@ class Odom2PoseNode:
             self.prev_gyro_t = t
             return
         self.prev_gyro_t = t
-        if self.v:
-            print(self.v)
 
         self.x_gyro+= self.v*np.cos(self.O_gyro)*dt
         self.y_gyro+=self.v*np.sin(self.O_gyro)*dt
