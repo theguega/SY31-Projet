@@ -41,6 +41,7 @@ class Odom2PoseNode:
         self.prev_right_encoder = 0
         self.prev_gyro_t = 0
         self.v = 0
+        self.w = 0
         self.x, self.y, self.O = 0,0,None
 
         # Publishers
@@ -54,7 +55,6 @@ class Odom2PoseNode:
         self.sub_final = rospy.Subscriber('/imu', Imu, self.callback_final)
         self.output_enco = None
         self.output_magn = None
-
     def callback_enco(self, sensor_state):
         # Compute the differential in encoder count
         d_left_encoder = sensor_state.left_encoder-self.prev_left_encoder
@@ -66,15 +66,15 @@ class Odom2PoseNode:
         self.prev_right_encoder = sensor_state.right_encoder
         self.prev_left_encoder = sensor_state.left_encoder
         
-        v_left = self.WHEEL_RADIUS*(d_left_encoder*np.pi*2/4096)
-        v_right = self.WHEEL_RADIUS*(d_right_encoder*np.pi*2/4096)
-        
-        self.v = (v_left+v_right)/2
-        self.w = (v_right-v_left)/(2*self.WHEEL_SEPARATION)
+        v_right = (2*np.pi/self.ENCODER_RESOLUTION*d_right_encoder)/(1/28.7)*self.WHEEL_RADIUS
+        v_left = (2*np.pi/self.ENCODER_RESOLUTION*d_left_encoder)/(1/28.7)*self.WHEEL_RADIUS
 
-        self.O_odom=self.O_odom+self.w/20
-        self.x_odom=self.x_odom+self.v*np.cos(self.O_odom)/20
-        self.y_odom=self.y_odom+self.v*np.sin(self.O_odom)/20
+        self.v = (v_left+v_right)/2
+        self.w = (v_right-v_left)/(self.WHEEL_SEPARATION)
+
+        self.x_odom=self.x_odom+self.v*np.cos(self.O_odom)/28.7
+        self.y_odom=self.y_odom+self.v*np.sin(self.O_odom)/28.7
+        self.O_odom=self.O_odom+self.w/28.7
 
         msg = coordinates_to_message(self.x_odom, self.y_odom, self.O_odom, sensor_state.header.stamp)
         self.output_enco = msg
@@ -89,18 +89,19 @@ class Odom2PoseNode:
         if self.O==None:
             self.O=w
 
-        self.O_magn=w
         self.x_magn=self.x_magn+self.v*np.cos(self.O_magn)
         self.y_magn=self.y_magn+self.v*np.sin(self.O_magn)
+        self.O_magn=w
 
         msg = coordinates_to_message(self.x_magn, self.y_magn, self.O_magn, magnetic_field.header.stamp)
         self.output_magn = msg
         self.pub_magn.publish(msg)
         
     def callback_final(self, gyro):
-        if self.v==0:
-            return
 
+        if not self.v or self.v==0:
+            return
+        
         # Compute the elapsed time
         t = gyro.header.stamp.to_sec()
         dt = t - self.prev_gyro_t
@@ -108,23 +109,26 @@ class Odom2PoseNode:
             self.prev_gyro_t = t
             return
         self.prev_gyro_t = t
-        
-        w=gyro.angular_velocity.z*dt
+        if self.v:
+            print(self.v)
 
-        self.O_gyro += w
-        self.x_gyro += self.v*np.cos(self.O_gyro)*dt
-        self.y_gyro += self.v*np.sin(self.O_gyro)*dt
+        self.x_gyro+= self.v*np.cos(self.O_gyro)*dt
+        self.y_gyro+=self.v*np.sin(self.O_gyro)*dt
+        self.O_gyro=self.O_gyro+gyro.angular_velocity.z*dt
 
-        msg = coordinates_to_message(self.x_gyro, self.y_gyro, self.O_gyro, gyro.header.stamp)
-        self.pub_gyro.publish(msg)
-        
-        self.O_mixed = self.O_gyro
-        self.x_mixed += self.v*np.cos(self.O_gyro)/4.95
-        self.y_mixed += self.v*np.sin(self.O_gyro)/4.95
+        msg_gyro = coordinates_to_message(self.x_gyro, self.y_gyro, self.O_gyro, gyro.header.stamp)
+        self.pub_gyro.publish(msg_gyro)
 
-        mixed_msg = coordinates_to_message(self.x_mixed, self.y_mixed, self.O_mixed, gyro.header.stamp)
-        self.pub_final.publish(mixed_msg)
         
+        self.x_mixed=self.x_mixed+self.v*np.cos(self.O_mixed)*dt
+        self.y_mixed=self.y_mixed+self.v*np.sin(self.O_mixed)*dt
+        self.O_mixed=self.O_gyro
+
+        
+        msg_mixed = coordinates_to_message(self.x_mixed, self.y_mixed, self.O_mixed, gyro.header.stamp)
+        self.pub_final.publish(msg_mixed)
+
+
 if __name__ == '__main__':
     node = Odom2PoseNode()
     try:
