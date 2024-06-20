@@ -66,8 +66,6 @@ class Odom2PoseNode:
         dt = t - self.prev_time_enco
         self.prev_time_enco = t  
 
-        print(dt)
-
         # Compute the differential in encoder count
         d_left_encoder = sensor_state.left_encoder-self.prev_left_encoder
         d_right_encoder = sensor_state.right_encoder-self.prev_right_encoder

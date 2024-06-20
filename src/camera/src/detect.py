@@ -20,7 +20,7 @@ class CameraNode:
         self.Bmin = self.Blue*0.8
         self.Bmax = self.Blue*1.2
 
-        self.Red = np.array([123,102,187])
+        self.Red = np.array([73,88,178])
         self.Rmin = self.Red*0.8
         self.Rmax = self.Red*1.2
 
@@ -116,6 +116,8 @@ class CameraNode:
                     self.pub_color.publish("droite")
                 else:
                     self.pub_color.publish("gauche")
+        else :
+            self.pub_color.publish("Tout droit")
 
 if __name__ == '__main__':
     # Start the node and wait until it receives a message or stopped by Ctrl+C

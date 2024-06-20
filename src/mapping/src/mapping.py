@@ -24,7 +24,7 @@ class MappingNode:
         rospy.init_node('mapping')
         # Map
         self.map = np.array([])
-        
+        self.theta_robot = None
         
 
         # Publishers
@@ -44,13 +44,20 @@ class MappingNode:
         self.angle = msg.data
         return
     
-    def callback_final(self, msg):    
+    def callback_final(self, msg):  
+        if not self.theta_robot:
+            return
+          
         # Transformation matrix
         T = np.array([[np.cos(self.theta_robot), -np.sin(self.theta_robot), self.x_robot],
                       [np.sin(self.theta_robot), np.cos(self.theta_robot), self.y_robot],
                       [0, 0, 1]])
         
+        
+        
         # Transform the points from the clusters
+        if len(list(read_points(msg)))<=1:
+            return
         points = np.array(list(read_points(msg)))[:,:2]
         points = np.hstack((points, np.ones((points.shape[0],1)))).transpose()
         points = np.dot(T, points)[:2].transpose()
