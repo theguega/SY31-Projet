@@ -15,7 +15,7 @@ class CameraNode:
 
         # CvBridge is used to convert ROS messages to matrices manipulable by OpenCV
         self.bridge = CvBridge()
-
+   
         # Initialize the node parameters
         self.Blue = np.array([166, 114, 3])
         self.Bmin = self.Blue * 0.8
@@ -128,6 +128,8 @@ class CameraNode:
                     self.pub_color.publish("droite")
                 else:
                     self.pub_color.publish("gauche")
+        else :
+            self.pub_color.publish("Tout droit")
 
 
 if __name__ == "__main__":

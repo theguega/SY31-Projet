@@ -27,6 +27,8 @@ class MappingNode:
         # Map
         self.map = np.array([])
 
+        self.theta_robot = None
+
         # Publishers
         self.mapper = rospy.Publisher("/map", PointCloud2, queue_size=10)
 
